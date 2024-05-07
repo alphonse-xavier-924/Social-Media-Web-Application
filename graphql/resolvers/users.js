@@ -17,7 +17,6 @@ function generateToken(user) {
     );
 }
 
-
 module.exports = {
     Mutation: {
 
