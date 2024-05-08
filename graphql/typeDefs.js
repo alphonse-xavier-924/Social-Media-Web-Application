@@ -8,6 +8,8 @@ module.exports = gql`
         createdAt: String!
         comments: [Comment]!
         likes:[Like]!
+        likeCount: Int!
+        commentCount: Int!
     }
 
     type Comment{
@@ -52,6 +54,11 @@ module.exports = gql`
         deleteComment(postId: String!, commentId: String!): Post!
         likePost(postId: String!): Post!
     }
+
+    type Subscription{
+        newPost: Post!
+    }
+
 `;
 
     /* In graphql we are using the Mutation type to register a user.
