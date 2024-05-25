@@ -14,7 +14,7 @@ function Home() {
 
   return (
     <Grid columns={3}>
-    <GridRow>
+    <GridRow className='page-title'>
       <h1>
         Recent Posts
       </h1>
