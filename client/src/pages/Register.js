@@ -1,38 +1,46 @@
 import React, { useState } from 'react';
 import { Form, Button } from 'semantic-ui-react';
 import { useMutation } from "@apollo/react-hooks";
+import { useNavigate } from 'react-router-dom';
 import gql from 'graphql-tag';
 
+import { useForm } from "../utils/hooks"
+
 function Register() {
+
   const [errors, setErrors] = useState({});
-  const [values, setValues] = useState({
+
+  const {onChange, onSubmit, values } = useForm(registerUser,{
     username: "",
     email: "",
     password: "",
-    confirmPassword: "",
-  });
-
-  const onChange = (event) => {
-    setValues({ ...values, [event.target.name]: event.target.value });
-  };
+    confirmPassword: "", 
+  })
+  
+  const navigate = useNavigate();
 
   const [addUser, { loading }] = useMutation(REGISTER_USER, {
-    update(proxy, result) {
+    update(_, result) {
       console.log(result);
+      //From React Router v6 or later, useNavigate hook should be used instead of history.push.
+      navigate("/")
     },
 
     //The value should be err.graphQLErrors[0].extensions.errors and not err.graphQLErrors[0].extensions.exceptions.errors
     onError(err) {
-      console.log(err.graphQLErrors[0].extensions.errors);
-      setErrors(err.graphQLErrors[0].extensions.errors);
+      //Have to check this error
+      if(err.graphQLErrors[0])
+      {
+        setErrors(err.graphQLErrors[0].extensions.errors);
+        console.log("Error");
+      }
     },
     variables: values
   });
 
-  const onSubmit = (event) => {
-    event.preventDefault();
+  function registerUser(){
     addUser();
-  };
+  }
 
   return (
     <div className='form-container'>
@@ -44,6 +52,7 @@ function Register() {
           name="username"
           type="text"
           value={values.username}
+          error={errors.username ? true : false}
           onChange={onChange}
         />
         <Form.Input
@@ -52,6 +61,7 @@ function Register() {
           name="email"
           type="email"
           value={values.email}
+          error={errors.email ? true : false}
           onChange={onChange}
         />
         <Form.Input
@@ -60,6 +70,7 @@ function Register() {
           name="password"
           type="password"
           value={values.password}
+          error={errors.password ? true : false}
           onChange={onChange}
         />
         <Form.Input
@@ -68,6 +79,7 @@ function Register() {
           name="confirmPassword"
           type="password"
           value={values.confirmPassword}
+          error={errors.confirmPassword ? true : false}
           onChange={onChange}
         />
         <Button type="submit" primary>Register</Button>
